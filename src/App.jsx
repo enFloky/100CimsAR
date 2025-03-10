@@ -10,6 +10,7 @@ import "@ar-js-org/ar.js";
 
 const ARScene = () => {
   const [coords, setCoords] = useState({ latitude: "??", longitude: "??" });
+  const [markerStatus, setMarkerStatus] = useState("🔍 Buscant marcador...");
 
   useEffect(() => {
     if (!navigator.geolocation) {
@@ -29,6 +30,15 @@ const ARScene = () => {
       },
       { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
     );
+
+    setTimeout(() => {
+      const marker = document.getElementById("st-brigida");
+      if (marker) {
+        setMarkerStatus("✅ Marcador carregat!");
+      } else {
+        setMarkerStatus("❌ No s'ha trobat el marcador!");
+      }
+    }, 5000);
   }, []);
 
   return (
@@ -45,14 +55,13 @@ const ARScene = () => {
         {/* 🔴 Marcador per Santa Brígida */}
         <a-entity
           gps-entity-place="latitude: 41.9541; longitude: 2.6231;"
-          scale="20 20 20"
-          position="0 5 0"
+          scale="30 30 30"
+          position="0 10 0"
           id="st-brigida"
           material="color: red;"
         >
           <a-text
             value="🗻 Santa Brígida"
-            look-at="[gps-camera]"
             color="red"
             align="center"
             scale="30 30 30"
@@ -60,7 +69,7 @@ const ARScene = () => {
         </a-entity>
       </a-scene>
 
-      {/* 📌 TEXT FIX A SOBRE AMB LES COORDENADES GPS */}
+      {/* 📌 INFO DE DEPURACIÓ */}
       <div
         style={{
           position: "absolute",
@@ -74,7 +83,8 @@ const ARScene = () => {
           fontFamily: "Arial, sans-serif",
         }}
       >
-        📍 Coordenades: Lat {coords.latitude}, Lon {coords.longitude}
+        📍 Coordenades: Lat {coords.latitude}, Lon {coords.longitude} <br />
+        {markerStatus}
       </div>
     </>
   );
