@@ -14,7 +14,8 @@
     "@ar-js-org/ar.js": "^3.4.7",
     "aframe": "^1.7.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "three": "0.164.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
@@ -27,5 +28,9 @@
     "gh-pages": "^6.3.0",
     "globals": "^15.15.0",
     "vite": "^6.2.0"
+  },
+  "overrides": {
+    "three": "0.164.1"
   }
+
 }

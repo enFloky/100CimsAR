@@ -1,13 +1,18 @@
-import React from 'react';
-import ARScene from './components/ARScene';
+import { useEffect } from "react";
+import "aframe";
+import "@ar-js-org/ar.js";
 
-function App() {
+const ARScene = () => {
+  useEffect(() => {
+    console.log("ARScene carregada!");
+  }, []);
+
   return (
-    <div className="App">
-      <h1>100CimsAR</h1>
-      <ARScene />
-    </div>
+    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+      <a-camera gps-camera rotation-reader></a-camera>
+      <a-text value="Hola AR!" position="0 2 -5" color="red"></a-text>
+    </a-scene>
   );
-}
+};
 
-export default App;
+export default ARScene;
