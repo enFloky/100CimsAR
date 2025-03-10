@@ -12,6 +12,7 @@ const ARScene = () => {
   const [coords, setCoords] = useState({ latitude: null, longitude: null });
   const [markerStatus, setMarkerStatus] = useState("🔍 Buscant marcador...");
   const [direction, setDirection] = useState(0);
+  const [deviceAngle, setDeviceAngle] = useState(0);
 
   // 📍 Coordenades de Santa Brígida
   const targetCoords = { latitude: 41.9541, longitude: 2.6231 };
@@ -55,6 +56,17 @@ const ARScene = () => {
         setMarkerStatus("❌ No s'ha trobat el marcador!");
       }
     }, 5000);
+
+    // 📡 🔄 Afegim suport per als sensors de moviment
+    if (window.DeviceOrientationEvent) {
+      window.addEventListener("deviceorientation", handleOrientation, true);
+    } else {
+      alert("❌ El teu dispositiu no suporta la brúixola (Gyroscope).");
+    }
+
+    return () => {
+      window.removeEventListener("deviceorientation", handleOrientation);
+    };
   }, []);
 
   // 🔄 Calcula la direcció cap al marcador
@@ -74,6 +86,16 @@ const ARScene = () => {
 
     return (bearing + 360) % 360; // Assegurem que el valor està entre 0 i 360
   };
+
+  // 🔄 Captura la rotació del mòbil per ajustar la fletxa
+  const handleOrientation = (event) => {
+    if (event.alpha !== null) {
+      setDeviceAngle(event.alpha);
+    }
+  };
+
+  // 🧭 Ajustem la fletxa segons la rotació del mòbil
+  const adjustedDirection = (direction - deviceAngle + 360) % 360;
 
   return (
     <>
@@ -119,7 +141,10 @@ const ARScene = () => {
         }}
       >
         📍 Coordenades: Lat {coords.latitude}, Lon {coords.longitude} <br />
-        {markerStatus}
+        {markerStatus} <br />
+        🧭 Angle brúixola: {deviceAngle.toFixed(1)}° <br />
+        ➡️ Direcció a Santa Brígida: {direction.toFixed(1)}° <br />
+        🔄 Direcció ajustada: {adjustedDirection.toFixed(1)}°
       </div>
 
       {/* 🔄 FLETXA QUE APUNTA CAP AL MARCADOR */}
@@ -128,7 +153,7 @@ const ARScene = () => {
           position: "absolute",
           top: "50%",
           left: "50%",
-          transform: `translate(-50%, -50%) rotate(${direction}deg)`,
+          transform: `translate(-50%, -50%) rotate(${adjustedDirection}deg)`,
           fontSize: "50px",
         }}
       >
