@@ -52,20 +52,21 @@ const ARScene = () => {
       >
         <a-camera gps-camera rotation-reader></a-camera>
 
-        {/* 🔴 Marcador per Santa Brígida */}
+        {/* 🔴 MARCADOR MOLT GRAN */}
         <a-entity
           gps-entity-place="latitude: 41.9541; longitude: 2.6231;"
-          scale="30 30 30"
-          position="0 10 0"
+          scale="100 100 100"
+          position="0 50 0"
           id="st-brigida"
           material="color: red;"
         >
           <a-text
-            value="🗻 Santa Brígida"
-            color="red"
+            value="🗻 SANTA BRÍGIDA"
+            color="yellow"
             align="center"
-            scale="30 30 30"
+            scale="200 200 200"
           ></a-text>
+          <a-sphere radius="10" color="red"></a-sphere>
         </a-entity>
       </a-scene>
 
