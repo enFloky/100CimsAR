@@ -1,9 +1,12 @@
 import { useEffect } from "react";
 
+// Evitar càrrega doble d'A-Frame
 if (!window.AFRAME) {
-  import("aframe");
-  window.AFRAME = true;
+  import("aframe").then(() => {
+    window.AFRAME = true;
+  });
 }
+
 import "@ar-js-org/ar.js";
 
 const ARScene = () => {
