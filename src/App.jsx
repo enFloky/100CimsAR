@@ -1,5 +1,9 @@
 import { useEffect } from "react";
-import "aframe";
+
+if (!window.AFRAME) {
+  import("aframe");
+  window.AFRAME = true;
+}
 import "@ar-js-org/ar.js";
 
 const ARScene = () => {
