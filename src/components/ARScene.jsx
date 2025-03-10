@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 
-// Comprovar si A-Frame ja està carregat per evitar duplicats
+// Evitar duplicats d'A-Frame
 if (!window.AFRAME) {
-  import("aframe");
+  window.AFRAME = require("aframe");
+  require("@ar-js-org/ar.js");
 }
-import "@ar-js-org/ar.js";
 
 const ARScene = () => {
   useEffect(() => {
