@@ -5,8 +5,9 @@ import { useState, useEffect } from 'react';
 const ARScene = () => {
   const [userLocation, setUserLocation] = useState(null);
   const [mountains, setMountains] = useState([
-    { name: "Santa Brígida", latitude: 42.0156, longitude: 2.6467, altitude: 400 },
-    { name: "Puigmal", latitude: 42.3946, longitude: 2.1434, altitude: 2910 }
+    { name: "Pedraforca", latitude: 42.1328, longitude: 1.5983, altitude: 2506 },
+    { name: "Puigmal", latitude: 42.3946, longitude: 2.1434, altitude: 2910 },
+    { name: "Santa Brígida", latitude: 42.0156, longitude: 2.6467, altitude: 400 }
   ]);
 
   useEffect(() => {
@@ -35,21 +36,27 @@ const ARScene = () => {
             key={index}
             gps-entity-place={`latitude: ${mountain.latitude}; longitude: ${mountain.longitude}`}
             position={`0 ${mountain.altitude - userLocation.altitude + 50} 0`}
-            scale="10 10 10"
           >
-            <a-image 
-              src="/pin.png" 
-              look-at="[gps-camera]" 
-              width="4" 
-              height="4"
-            ></a-image>
-            <a-text 
-              value={mountain.name} 
-              look-at="[gps-camera]" 
-              color="red" 
-              scale="5 5 5"
-              position="0 3 0"
-            ></a-text>
+            {/* Afegim un fons amb el nom de la muntanya */}
+            <a-plane
+              position="0 0 0"
+              rotation="0 0 0"
+              width="4"
+              height="1"
+              color="#32a852"
+              opacity="0.8"
+              look-at="[gps-camera]"
+            >
+              <a-text
+                value={mountain.name + " - " + mountain.altitude + "m"}
+                look-at="[gps-camera]"
+                color="white"
+                align="center"
+                font="mozillavr"
+                width="4"
+                scale="2 2 2"
+              ></a-text>
+            </a-plane>
           </a-entity>
         ))}
     </a-scene>
