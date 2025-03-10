@@ -9,8 +9,12 @@ if (!window.AFRAME) {
 import "@ar-js-org/ar.js";
 
 const ARScene = () => {
-  const [coords, setCoords] = useState({ latitude: "??", longitude: "??" });
+  const [coords, setCoords] = useState({ latitude: null, longitude: null });
   const [markerStatus, setMarkerStatus] = useState("🔍 Buscant marcador...");
+  const [direction, setDirection] = useState(0);
+
+  // 📍 Coordenades de Santa Brígida
+  const targetCoords = { latitude: 41.9541, longitude: 2.6231 };
 
   useEffect(() => {
     if (!navigator.geolocation) {
@@ -20,10 +24,22 @@ const ARScene = () => {
 
     navigator.geolocation.watchPosition(
       (position) => {
+        const userLat = position.coords.latitude;
+        const userLon = position.coords.longitude;
+
         setCoords({
-          latitude: position.coords.latitude.toFixed(6),
-          longitude: position.coords.longitude.toFixed(6),
+          latitude: userLat.toFixed(6),
+          longitude: userLon.toFixed(6),
         });
+
+        // 📍 Calcula la direcció entre l'usuari i Santa Brígida
+        const userToTargetAngle = calculateBearing(
+          userLat,
+          userLon,
+          targetCoords.latitude,
+          targetCoords.longitude
+        );
+        setDirection(userToTargetAngle);
       },
       (error) => {
         setCoords({ latitude: "Error", longitude: error.message });
@@ -41,6 +57,24 @@ const ARScene = () => {
     }, 5000);
   }, []);
 
+  // 🔄 Calcula la direcció cap al marcador
+  const calculateBearing = (lat1, lon1, lat2, lon2) => {
+    const toRadians = (deg) => (deg * Math.PI) / 180;
+    const toDegrees = (rad) => (rad * 180) / Math.PI;
+
+    const dLon = toRadians(lon2 - lon1);
+    const lat1Rad = toRadians(lat1);
+    const lat2Rad = toRadians(lat2);
+
+    const y = Math.sin(dLon) * Math.cos(lat2Rad);
+    const x =
+      Math.cos(lat1Rad) * Math.sin(lat2Rad) -
+      Math.sin(lat1Rad) * Math.cos(lat2Rad) * Math.cos(dLon);
+    const bearing = toDegrees(Math.atan2(y, x));
+
+    return (bearing + 360) % 360; // Assegurem que el valor està entre 0 i 360
+  };
+
   return (
     <>
       {/* AR.js Scene */}
@@ -52,11 +86,11 @@ const ARScene = () => {
       >
         <a-camera gps-camera rotation-reader></a-camera>
 
-        {/* 🔴 MARCADOR MOLT GRAN */}
+        {/* 🔴 MARCADOR */}
         <a-entity
           gps-entity-place="latitude: 41.9541; longitude: 2.6231;"
-          scale="100 100 100"
-          position="0 50 0"
+          scale="50 50 50"
+          position="0 20 0"
           id="st-brigida"
           material="color: red;"
         >
@@ -64,7 +98,7 @@ const ARScene = () => {
             value="🗻 SANTA BRÍGIDA"
             color="yellow"
             align="center"
-            scale="200 200 200"
+            scale="100 100 100"
           ></a-text>
           <a-sphere radius="10" color="red"></a-sphere>
         </a-entity>
@@ -86,6 +120,19 @@ const ARScene = () => {
       >
         📍 Coordenades: Lat {coords.latitude}, Lon {coords.longitude} <br />
         {markerStatus}
+      </div>
+
+      {/* 🔄 FLETXA QUE APUNTA CAP AL MARCADOR */}
+      <div
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: `translate(-50%, -50%) rotate(${direction}deg)`,
+          fontSize: "50px",
+        }}
+      >
+        🔺
       </div>
     </>
   );
