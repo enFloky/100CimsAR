@@ -6,6 +6,7 @@ import PeakFinderPanel from "./components/PeakFinderPanel";
 function App() {
   const [userLocation, setUserLocation] = useState(null);
   const [userHeading, setUserHeading] = useState(null);
+  const [showAR, setShowAR] = useState(false); // Estat per alternar entre mapa i AR
   const [mountains, setMountains] = useState([
     { name: "Pedraforca", latitude: 42.1328, longitude: 1.5983, altitude: 2506 },
     { name: "Puigmal", latitude: 42.3946, longitude: 2.1434, altitude: 2910 },
@@ -40,49 +41,55 @@ function App() {
     <div className="App">
       <h1>100CimsAR</h1>
 
-      {/* Panell 2D de PeakFinder (o un mapa de muntanyes) */}
-      <PeakFinderPanel />
+      {/* Botó per canviar entre la vista de mapa i AR */}
+      <button onClick={() => setShowAR(!showAR)} style={{ marginBottom: "20px" }}>
+        {showAR ? "Veure Mapa" : "Veure en AR"}
+      </button>
 
-      {/* Escena AR amb la càmera */}
-      <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;" vr-mode-ui="enabled: false">
-        {/* Càmera per a AR */}
-        <a-camera gps-camera rotation-reader></a-camera>
+      {/* Mostrar el mapa o l'AR depenent de l'estat */}
+      {showAR ? (
+        <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;" vr-mode-ui="enabled: false">
+          {/* Càmera per AR */}
+          <a-camera gps-camera rotation-reader></a-camera>
 
-        {userLocation && userHeading &&
-          mountains.map((mountain, index) => {
-            // Calcular el rumb cap a la muntanya
-            const bearing = calculateBearing(userLocation, mountain);
+          {userLocation && userHeading &&
+            mountains.map((mountain, index) => {
+              // Calcular el rumb cap a la muntanya
+              const bearing = calculateBearing(userLocation, mountain);
 
-            return (
-              <a-entity
-                key={index}
-                gps-entity-place={`latitude: ${mountain.latitude}; longitude: ${mountain.longitude}`}
-                position={`0 ${mountain.altitude - userLocation.altitude + 50} 0`}
-                rotation={`0 ${bearing - userHeading} 0`} // Ajustar rotació segons l'orientació
-              >
-                {/* Afegir un fons amb el nom de la muntanya */}
-                <a-plane
-                  position="0 0 0"
-                  width="5"
-                  height="1.5"
-                  color="#32a852"
-                  opacity="0.8"
-                  look-at="[gps-camera]"
+              return (
+                <a-entity
+                  key={index}
+                  gps-entity-place={`latitude: ${mountain.latitude}; longitude: ${mountain.longitude}`}
+                  position={`0 ${mountain.altitude - userLocation.altitude + 50} 0`}
+                  rotation={`0 ${bearing - userHeading} 0`} // Ajustar rotació segons l'orientació
                 >
-                  <a-text
-                    value={mountain.name + " - " + mountain.altitude + "m"}
+                  {/* Afegir un fons amb el nom de la muntanya */}
+                  <a-plane
+                    position="0 0 0"
+                    width="5"
+                    height="1.5"
+                    color="#32a852"
+                    opacity="0.8"
                     look-at="[gps-camera]"
-                    color="white"
-                    align="center"
-                    font="mozillavr"
-                    width="4"
-                    scale="2 2 2"
-                  ></a-text>
-                </a-plane>
-              </a-entity>
-            );
-          })}
-      </a-scene>
+                  >
+                    <a-text
+                      value={mountain.name + " - " + mountain.altitude + "m"}
+                      look-at="[gps-camera]"
+                      color="white"
+                      align="center"
+                      font="mozillavr"
+                      width="4"
+                      scale="2 2 2"
+                    ></a-text>
+                  </a-plane>
+                </a-entity>
+              );
+            })}
+        </a-scene>
+      ) : (
+        <PeakFinderPanel />
+      )}
     </div>
   );
 }
