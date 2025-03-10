@@ -1,6 +1,9 @@
+// Elimina aquesta línia si existeix a `PeakFinderPanel.jsx`
+// import * as THREE from 'three';
+
 import React, { useState, useEffect } from 'react';
 import 'aframe';
-import '@ar-js-org/ar.js';
+import '@ar-js-org/ar.js'; // Asegura't que tens aquestes dues dependències
 
 const PeakFinderPanel = () => {
   const [userLocation, setUserLocation] = useState(null);
@@ -39,12 +42,9 @@ const PeakFinderPanel = () => {
     <div>
       <h2>Mapa i AR de les Muntanyes</h2>
 
-      {/* Botó per alternar entre mapa i AR */}
-      <button onClick={() => setShowAR(!showAR)} style={{ marginBottom: "20px" }}>
-        {showAR ? "Veure Mapa" : "Veure en AR"}
-      </button>
-
-      {/* Mostrar AR o Mapa */}
+      {/* Aquí es poden afegir altres elements si vols mostrar més informació */}
+      
+      {/* Afegir la càmera i AR aquí */}
       <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
         {/* Càmera per AR */}
         <a-camera gps-camera rotation-reader></a-camera>
