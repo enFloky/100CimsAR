@@ -1,8 +1,10 @@
 import { useEffect } from "react";
 
+// Evitar càrrega doble d'A-Frame
 if (!window.AFRAME) {
-  require("aframe");
-  window.AFRAME = true; // ✅ Evitem carregar A-Frame més d'una vegada
+  import("aframe").then(() => {
+    window.AFRAME = true;
+  });
 }
 
 import "@ar-js-org/ar.js";
